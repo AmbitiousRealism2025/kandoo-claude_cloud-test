@@ -12,7 +12,7 @@ interface BoardStore {
   selectedCards: Set<CardId>;
 
   // Card actions
-  createCard: (stageId: StageId, card: Omit<Card, 'id' | 'createdAt' | 'updatedAt' | 'timeInStage' | 'totalTime' | 'activity'>) => CardId;
+  createCard: (stageId: StageId, card: Omit<Card, 'id' | 'stage' | 'createdAt' | 'updatedAt' | 'timeInStage' | 'totalTime' | 'activity'>) => CardId;
   updateCard: (cardId: CardId, updates: Partial<Card>) => void;
   deleteCard: (cardId: CardId) => void;
   moveCard: (cardId: CardId, toStage: StageId, toIndex: number) => void;
@@ -110,7 +110,7 @@ const createInitialStages = (): Map<StageId, Stage> => {
 // Helper to create a new card
 const createNewCard = (
   stageId: StageId,
-  cardData: Omit<Card, 'id' | 'createdAt' | 'updatedAt' | 'timeInStage' | 'totalTime' | 'activity'>
+  cardData: Omit<Card, 'id' | 'stage' | 'createdAt' | 'updatedAt' | 'timeInStage' | 'totalTime' | 'activity'>
 ): Card => {
   const now = new Date();
   return {

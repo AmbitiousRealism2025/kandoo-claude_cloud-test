@@ -2,11 +2,21 @@ import { useEffect } from 'react';
 import { useUIStore } from '@stores/uiStore';
 import { useUserStore } from '@stores/userStore';
 import CodeRain from '@components/CodeRain/CodeRain';
+import CardComposer from '@components/CardComposer/CardComposer';
+import CardDetail from '@components/CardDetail/CardDetail';
 import Board from './features/board/Board';
+import { seedBoardWithSampleData, shouldSeedBoard } from '@utils/seedData';
 
 function App() {
   const { setIsMobile } = useUIStore();
   const { theme, codeRainIntensity, updateLastActive } = useUserStore();
+
+  // Seed board with sample data on first load
+  useEffect(() => {
+    if (shouldSeedBoard()) {
+      seedBoardWithSampleData();
+    }
+  }, []);
 
   // Handle mobile detection
   useEffect(() => {
@@ -61,6 +71,10 @@ function App() {
       <main className="app-content">
         <Board />
       </main>
+
+      {/* Modals */}
+      <CardComposer />
+      <CardDetail />
     </div>
   );
 }
