@@ -202,28 +202,53 @@ export const useBoardStore = create<BoardStore>()(
             const newCards = new Map(state.cards);
             const newStages = new Map(state.stages);
 
-            // Update card
-            newCards.set(cardId, {
-              ...card,
-              stage: toStage,
-              updatedAt: new Date(),
-              timeInStage: 0,
-            });
+            if (fromStage === toStage) {
+              // Same column reordering
+              const stage = newStages.get(toStage);
+              if (stage) {
+                const cards = [...stage.cards];
+                const fromIndex = cards.indexOf(cardId);
 
-            // Remove from old stage
-            const oldStage = newStages.get(fromStage);
-            if (oldStage) {
-              oldStage.cards = oldStage.cards.filter((id) => id !== cardId);
-              newStages.set(fromStage, { ...oldStage });
-            }
+                if (fromIndex !== -1 && fromIndex !== toIndex) {
+                  // Remove from old position
+                  cards.splice(fromIndex, 1);
+                  // Insert at new position
+                  cards.splice(toIndex, 0, cardId);
 
-            // Add to new stage
-            const newStage = newStages.get(toStage);
-            if (newStage) {
-              const cards = [...newStage.cards];
-              cards.splice(toIndex, 0, cardId);
-              newStage.cards = cards;
-              newStages.set(toStage, { ...newStage });
+                  newStages.set(toStage, { ...stage, cards });
+                }
+              }
+
+              // Update card timestamp
+              newCards.set(cardId, {
+                ...card,
+                updatedAt: new Date(),
+              });
+            } else {
+              // Cross-column move
+              // Update card
+              newCards.set(cardId, {
+                ...card,
+                stage: toStage,
+                updatedAt: new Date(),
+                timeInStage: 0,
+              });
+
+              // Remove from old stage
+              const oldStage = newStages.get(fromStage);
+              if (oldStage) {
+                oldStage.cards = oldStage.cards.filter((id) => id !== cardId);
+                newStages.set(fromStage, { ...oldStage });
+              }
+
+              // Add to new stage
+              const newStage = newStages.get(toStage);
+              if (newStage) {
+                const cards = [...newStage.cards];
+                cards.splice(toIndex, 0, cardId);
+                newStage.cards = cards;
+                newStages.set(toStage, { ...newStage });
+              }
             }
 
             return { cards: newCards, stages: newStages };

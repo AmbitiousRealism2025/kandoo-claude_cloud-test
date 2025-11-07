@@ -1,7 +1,6 @@
 import { useBoardStore } from '@stores/boardStore';
 import { useUIStore } from '@stores/uiStore';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import DroppableColumn from '@components/DroppableColumn/DroppableColumn';
 import GlassCard from '@components/GlassCard/GlassCard';
 import type { Card, CardId, StageId } from '../../types/index';
@@ -14,6 +13,7 @@ const Board = () => {
   const stageArray = Array.from(stages.values());
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
 
   // Configure sensors for drag and drop
   const sensors = useSensors(
@@ -32,53 +32,66 @@ const Board = () => {
     }
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over } = event;
+    setOverId(over ? String(over.id) : null);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over) {
-      setActiveCard(null);
-      return;
-    }
-
-    const activeCard = cards.get(active.id as CardId);
-    if (!activeCard) {
-      setActiveCard(null);
-      return;
-    }
-
-    // Get the target stage
-    const overStageId = over.id as StageId;
-    const overStage = stages.get(overStageId);
-
-    if (overStage) {
-      // Moving to a different column
-      const targetCards = getCardsByStage(overStageId);
-      const newIndex = targetCards.length; // Add to end
-      moveCard(active.id as CardId, overStageId, newIndex);
-    } else {
-      // Reordering within same column
-      const overCard = cards.get(over.id as CardId);
-      if (overCard && activeCard.stage === overCard.stage) {
-        const stageCards = getCardsByStage(activeCard.stage);
-        const oldIndex = stageCards.findIndex(c => c.id === activeCard.id);
-        const newIndex = stageCards.findIndex(c => c.id === overCard.id);
-
-        if (oldIndex !== newIndex) {
-          const reorderedCards = arrayMove(stageCards, oldIndex, newIndex);
-          // Update the stage's card order
-          const stage = stages.get(activeCard.stage);
-          if (stage) {
-            stage.cards = reorderedCards.map(c => c.id);
-          }
-        }
-      }
-    }
-
     setActiveCard(null);
+    setOverId(null);
+
+    if (!over) {
+      return;
+    }
+
+    const draggedCard = cards.get(active.id as CardId);
+    if (!draggedCard) {
+      return;
+    }
+
+    // Check if we're dropping on a card or a column
+    const overCard = cards.get(over.id as CardId);
+    const overStage = stages.get(over.id as StageId);
+
+    let targetStageId: StageId;
+    let targetIndex: number;
+
+    if (overCard) {
+      // Dropping on a card - insert relative to that card
+      targetStageId = overCard.stage;
+      const stageCards = getCardsByStage(targetStageId);
+      const overCardIndex = stageCards.findIndex(c => c.id === overCard.id);
+
+      if (draggedCard.stage === targetStageId) {
+        // Same column reordering
+        const activeIndex = stageCards.findIndex(c => c.id === draggedCard.id);
+        targetIndex = activeIndex < overCardIndex ? overCardIndex : overCardIndex;
+      } else {
+        // Cross-column move - insert at the position of the card we're over
+        targetIndex = overCardIndex;
+      }
+    } else if (overStage) {
+      // Dropping on a column - add to end
+      targetStageId = overStage.id;
+      const targetCards = getCardsByStage(targetStageId);
+      targetIndex = targetCards.length;
+    } else {
+      // Invalid drop target
+      return;
+    }
+
+    // Only move if something actually changed
+    if (draggedCard.stage !== targetStageId || overCard) {
+      moveCard(active.id as CardId, targetStageId, targetIndex);
+    }
   };
 
   const handleDragCancel = () => {
     setActiveCard(null);
+    setOverId(null);
   };
 
   const handleAddCard = (stageId: string) => {
@@ -111,6 +124,7 @@ const Board = () => {
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
