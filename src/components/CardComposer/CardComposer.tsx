@@ -7,21 +7,21 @@ import './CardComposer.css';
 
 // Pre-made tags for vibe coders
 const PRESET_TAGS = [
-  { name: 'bug', color: '#FF6B6B', category: 'type' },
-  { name: 'feature', color: '#51CF66', category: 'type' },
-  { name: 'refactor', color: '#4FD1FF', category: 'type' },
-  { name: 'docs', color: '#FFD93D', category: 'type' },
-  { name: 'test', color: '#A78BFA', category: 'type' },
-  { name: 'performance', color: '#FFA94D', category: 'type' },
-  { name: 'security', color: '#F472B6', category: 'type' },
-  { name: 'frontend', color: '#22D3EE', category: 'scope' },
-  { name: 'backend', color: '#2DD4BF', category: 'scope' },
-  { name: 'api', color: '#06B6D4', category: 'scope' },
-  { name: 'database', color: '#0891B2', category: 'scope' },
-  { name: 'urgent', color: '#EF4444', category: 'priority' },
-  { name: 'blocked', color: '#6B7280', category: 'priority' },
-  { name: 'ready', color: '#10B981', category: 'priority' },
-  { name: 'review', color: '#8B5CF6', category: 'priority' },
+  { name: 'bug', color: '#FF6B6B', category: 'custom' },
+  { name: 'feature', color: '#51CF66', category: 'custom' },
+  { name: 'refactor', color: '#4FD1FF', category: 'custom' },
+  { name: 'docs', color: '#FFD93D', category: 'custom' },
+  { name: 'test', color: '#A78BFA', category: 'custom' },
+  { name: 'performance', color: '#FFA94D', category: 'custom' },
+  { name: 'security', color: '#F472B6', category: 'custom' },
+  { name: 'frontend', color: '#22D3EE', category: 'custom' },
+  { name: 'backend', color: '#2DD4BF', category: 'custom' },
+  { name: 'api', color: '#06B6D4', category: 'custom' },
+  { name: 'database', color: '#0891B2', category: 'custom' },
+  { name: 'urgent', color: '#EF4444', category: 'custom' },
+  { name: 'blocked', color: '#6B7280', category: 'custom' },
+  { name: 'ready', color: '#10B981', category: 'custom' },
+  { name: 'review', color: '#8B5CF6', category: 'custom' },
 ] as const;
 
 const COLOR_OPTIONS = [
