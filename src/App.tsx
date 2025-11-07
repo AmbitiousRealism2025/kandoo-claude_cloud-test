@@ -1,14 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useUIStore } from '@stores/uiStore';
 import { useUserStore } from '@stores/userStore';
 import CodeRain from '@components/CodeRain/CodeRain';
-import CardComposer from '@components/CardComposer/CardComposer';
-import CardDetail from '@components/CardDetail/CardDetail';
-import CommandPalette from '@components/CommandPalette/CommandPalette';
-import ShortcutsHelp from '@components/ShortcutsHelp/ShortcutsHelp';
+import PWAInstallPrompt from '@components/PWAInstallPrompt/PWAInstallPrompt';
 import Board from './features/board/Board';
 import { seedBoardWithSampleData, shouldSeedBoard } from '@utils/seedData';
 import { useKeyboardShortcuts } from '@hooks/useKeyboardShortcuts';
+
+// Lazy load modal components for better performance
+const CardComposer = lazy(() => import('@components/CardComposer/CardComposer'));
+const CardDetail = lazy(() => import('@components/CardDetail/CardDetail'));
+const CommandPalette = lazy(() => import('@components/CommandPalette/CommandPalette'));
+const ShortcutsHelp = lazy(() => import('@components/ShortcutsHelp/ShortcutsHelp'));
 
 function App() {
   const { setIsMobile } = useUIStore();
@@ -78,11 +81,16 @@ function App() {
         <Board />
       </main>
 
-      {/* Modals */}
-      <CardComposer />
-      <CardDetail />
-      <CommandPalette />
-      <ShortcutsHelp />
+      {/* Modals - lazy loaded for performance */}
+      <Suspense fallback={null}>
+        <CardComposer />
+        <CardDetail />
+        <CommandPalette />
+        <ShortcutsHelp />
+      </Suspense>
+
+      {/* PWA install prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 }
