@@ -25,10 +25,10 @@ const GlassCard: React.FC<GlassCardProps> = ({
   // Energy tag colors
   const getEnergyTagColor = (tag: string): string => {
     const colors: Record<string, string> = {
-      '🔥 On Fire': 'var(--neon-orange)',
-      '🧊 Blocked': 'var(--neon-cyan)',
-      '⏸️ Paused': 'var(--base-500)',
-      '🌊 Flowing': 'var(--neon-purple)',
+      'On Fire': 'var(--neon-orange)',
+      'Blocked': 'var(--neon-cyan)',
+      'Paused': 'var(--base-500)',
+      'Flowing': 'var(--neon-purple)',
     };
     return colors[tag] || 'var(--neon-cyan)';
   };
