@@ -4,12 +4,18 @@ import { useUserStore } from '@stores/userStore';
 import CodeRain from '@components/CodeRain/CodeRain';
 import CardComposer from '@components/CardComposer/CardComposer';
 import CardDetail from '@components/CardDetail/CardDetail';
+import CommandPalette from '@components/CommandPalette/CommandPalette';
+import ShortcutsHelp from '@components/ShortcutsHelp/ShortcutsHelp';
 import Board from './features/board/Board';
 import { seedBoardWithSampleData, shouldSeedBoard } from '@utils/seedData';
+import { useKeyboardShortcuts } from '@hooks/useKeyboardShortcuts';
 
 function App() {
   const { setIsMobile } = useUIStore();
   const { theme, codeRainIntensity, updateLastActive } = useUserStore();
+
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts();
 
   // Seed board with sample data on first load
   useEffect(() => {
@@ -75,6 +81,8 @@ function App() {
       {/* Modals */}
       <CardComposer />
       <CardDetail />
+      <CommandPalette />
+      <ShortcutsHelp />
     </div>
   );
 }

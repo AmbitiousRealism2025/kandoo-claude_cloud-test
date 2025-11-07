@@ -48,45 +48,51 @@ kandoo-vibeflow/
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation ✓ (Current)
+### Phase 1: Foundation ✅ COMPLETED
 1. **Project Setup**
    - [x] Initialize Vite + React 19 + TypeScript
    - [x] Create package.json with dependencies
    - [x] Set up TypeScript configuration
-   - [ ] Install all dependencies
-   - [ ] Create complete folder structure
+   - [x] Install all dependencies
+   - [x] Create complete folder structure
 
 2. **Code Rain Background**
    - [x] Base CodeRain component created
-   - [ ] Optimize with virtual scrolling
-   - [ ] Add syntax highlighting
-   - [ ] Test performance with different densities
+   - [x] Optimize with virtual scrolling
+   - [x] Add syntax highlighting
+   - [x] Add intensity controls (off/low/medium/high)
 
 3. **Design System**
-   - [ ] Create CSS variables from design-system.md
-   - [ ] Implement glass surface components
-   - [ ] Set up typography tokens
-   - [ ] Create reusable glass UI primitives
+   - [x] Create CSS variables from design-system.md
+   - [x] Implement glass surface components
+   - [x] Set up typography tokens
+   - [x] Create reusable glass UI primitives
 
-### Phase 2: Core Functionality
+### Phase 2: Core Functionality ✅ COMPLETED
 1. **State Management**
-   - [ ] Implement boardStore (stages, cards, drag state)
-   - [ ] Implement uiStore (filters, search, UI state)
-   - [ ] Implement userStore (preferences, metrics)
-   - [ ] Set up localStorage persistence
+   - [x] Implement boardStore (stages, cards, drag state)
+   - [x] Implement uiStore (filters, search, UI state)
+   - [x] Implement userStore (preferences, metrics)
+   - [x] Set up localStorage persistence
 
 2. **Kanban Board**
-   - [ ] Create 5-column layout (Vibes, Mapping, Flow, Proving, Shipped)
-   - [ ] Implement @dnd-kit integration
-   - [ ] Add stage components with gradients
-   - [ ] Implement WIP limits
+   - [x] Create 5-column layout (Vibes, Mapping, Flow, Proving, Shipped)
+   - [x] Implement @dnd-kit integration with DraggableCard & DroppableColumn
+   - [x] Add stage components with gradients
+   - [x] Implement WIP limits with visual warnings
+   - [x] Add drag overlay with rotation effect
+   - [x] Card reordering within columns
+   - [x] Cross-column card movement
 
 3. **Card System**
    - [x] Base GlassCard component created
-   - [ ] Add inline card composer
-   - [ ] Implement markdown support
-   - [ ] Add syntax highlighting
-   - [ ] Implement tag system
+   - [x] Add CardComposer modal for creating cards
+   - [x] Add CardDetail modal for viewing/editing
+   - [x] Implement markdown support with ReactMarkdown
+   - [x] Add syntax highlighting with Prism
+   - [x] Implement tag system (create, add, remove)
+   - [x] Priority and effort points
+   - [x] Seed data utility with 12 sample cards
 
 ### Phase 3: Enhanced Features
 1. **Command Palette**
