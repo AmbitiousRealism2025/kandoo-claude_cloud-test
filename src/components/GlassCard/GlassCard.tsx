@@ -33,13 +33,23 @@ const GlassCard: React.FC<GlassCardProps> = ({
     return colors[tag] || 'var(--neon-cyan)';
   };
   
-  // Priority tag colors
+  // Priority colors with gradients for better visual distinction
   const getPriorityColor = (priority?: string): string => {
     const colors: Record<string, string> = {
-      'Critical': '#FF5370',
-      'High': '#F78C6C',
-      'Medium': '#FFCB6B',
-      'Low': '#C3E88D',
+      'Critical': 'linear-gradient(90deg, #FF5370, #F78C6C)',  // Red to Orange
+      'High': 'linear-gradient(90deg, #F78C6C, #FFCB6B)',      // Orange to Yellow
+      'Medium': 'linear-gradient(90deg, #FFCB6B, #C3E88D)',    // Yellow to Green
+      'Low': 'linear-gradient(90deg, #C3E88D, #89DDFF)',       // Green to Cyan
+    };
+    return colors[priority || ''] || 'transparent';
+  };
+
+  const getPriorityShadowColor = (priority?: string): string => {
+    const colors: Record<string, string> = {
+      'Critical': 'rgba(255, 83, 112, 0.6)',
+      'High': 'rgba(247, 140, 108, 0.6)',
+      'Medium': 'rgba(255, 203, 107, 0.6)',
+      'Low': 'rgba(195, 232, 141, 0.6)',
     };
     return colors[priority || ''] || 'transparent';
   };
@@ -89,9 +99,10 @@ const GlassCard: React.FC<GlassCardProps> = ({
             top: 0,
             left: 0,
             right: 0,
-            height: '3px',
+            height: '4px',
             background: getPriorityColor(card.priority),
-            boxShadow: `0 0 10px ${getPriorityColor(card.priority)}`,
+            borderRadius: '12px 12px 0 0',
+            boxShadow: `0 0 15px ${getPriorityShadowColor(card.priority)}`,
           }}
         />
       )}
@@ -108,19 +119,36 @@ const GlassCard: React.FC<GlassCardProps> = ({
           {card.title}
         </h3>
         
-        {/* Effort points */}
-        {card.effortPoints && (
-          <span style={{
-            fontSize: '12px',
-            color: 'var(--base-400)',
-            background: 'rgba(79, 209, 255, 0.1)',
-            padding: '2px 8px',
-            borderRadius: '4px',
-            border: '1px solid rgba(79, 209, 255, 0.2)',
-          }}>
-            {card.effortPoints} pts
-          </span>
-        )}
+        {/* Effort points and Priority badge */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {card.effortPoints && (
+            <span style={{
+              fontSize: '12px',
+              color: 'var(--base-400)',
+              background: 'rgba(79, 209, 255, 0.1)',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              border: '1px solid rgba(79, 209, 255, 0.2)',
+            }}>
+              {card.effortPoints} pts
+            </span>
+          )}
+          {card.priority && (
+            <span style={{
+              fontSize: '10px',
+              fontWeight: 600,
+              color: '#fff',
+              background: getPriorityColor(card.priority),
+              padding: '3px 8px',
+              borderRadius: '4px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              boxShadow: `0 0 8px ${getPriorityShadowColor(card.priority)}`,
+            }}>
+              {card.priority}
+            </span>
+          )}
+        </div>
       </div>
       
       {/* Card description with markdown support */}
