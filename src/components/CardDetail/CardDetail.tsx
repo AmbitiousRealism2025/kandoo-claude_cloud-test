@@ -172,7 +172,13 @@ const CardDetail = () => {
                 <h3>Tags</h3>
                 <div className="tags-list">
                   {card.tags.map(tag => (
-                    <span key={tag.id} className="tag-pill">
+                    <span
+                      key={tag.id}
+                      className="tag-pill"
+                      style={{
+                        '--tag-color': tag.color || '#4FD1FF',
+                      } as React.CSSProperties}
+                    >
                       {tag.name}
                     </span>
                   ))}
