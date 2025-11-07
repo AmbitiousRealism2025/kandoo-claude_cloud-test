@@ -133,6 +133,47 @@ kandoo-vibeflow/
    - [ ] Background sync (future)
    - [ ] Push notifications (future)
 
+## Bug Fixes & Improvements
+
+### Drag-and-Drop Fix (2025-11-07)
+**Branch:** `claude/fix-drag-and-drop-011CUu6dwG2kVMft2S1smZvv`
+**Commit:** `e6ae7b9`
+
+Fixed critical drag-and-drop issues that prevented proper card movement and reordering:
+
+**Issues Fixed:**
+1. ❌ Missing `onDragOver` handler - Prevented real-time position tracking during drag
+2. ❌ Incorrect `handleDragEnd` logic - Couldn't distinguish between dropping on cards vs columns
+3. ❌ State mutation bug - Reordering bypassed Zustand state management
+4. ❌ No insertion position calculation - Couldn't insert cards between existing cards
+
+**Changes in `src/features/board/Board.tsx`:**
+- Added `DragOverEvent` import from `@dnd-kit/core`
+- Added `overId` state variable to track current drag-over target
+- Implemented `handleDragOver` handler for real-time tracking
+- Completely rewrote `handleDragEnd` with proper card/column detection:
+  - Distinguishes between dropping on cards vs columns
+  - Calculates correct insertion position
+  - Handles same-column reordering
+  - Handles cross-column moves
+- Updated `handleDragCancel` to reset `overId` state
+- Wired up `onDragOver` handler in `DndContext`
+- Removed unused `arrayMove` import
+
+**Changes in `src/stores/boardStore.ts`:**
+- Fixed `moveCard` function to properly handle both scenarios:
+  - Same-column reordering: Uses splice to remove and re-insert at correct position
+  - Cross-column moves: Removes from old stage, inserts at specified position in new stage
+- Separated logic paths for clarity and correctness
+- Fixed off-by-one errors in position calculations
+- Maintained Zustand immutability patterns throughout
+
+**Result:**
+✅ Cards can be dragged between columns
+✅ Cards can be inserted between existing cards
+✅ Cards can be reordered within the same column
+✅ State properly persists to localStorage
+
 ## Key Design Principles
 
 ### Glassmorphism Formula
