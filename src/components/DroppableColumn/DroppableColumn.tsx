@@ -41,7 +41,6 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
       className={`droppable-column glass-surface ${isOver ? 'is-over' : ''} ${showWarning ? 'wip-warning' : ''}`}
     >
       <div className="column-header">
-        <span className="column-icon">{stage.icon}</span>
         <h2 className="column-title">{stage.title}</h2>
         {stage.wipLimit && (
           <span className={`wip-limit ${isAtLimit ? 'at-limit' : ''} ${isOverLimit ? 'over-limit' : ''}`}>
@@ -91,7 +90,7 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
 
       {showWarning && (
         <div className="wip-warning-message">
-          {isOverLimit ? '⚠️ Over WIP limit!' : '⚠️ At WIP limit'}
+          {isOverLimit ? 'Over WIP limit!' : 'At WIP limit'}
         </div>
       )}
     </div>
