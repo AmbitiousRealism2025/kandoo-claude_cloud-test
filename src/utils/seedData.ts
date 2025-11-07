@@ -6,25 +6,25 @@ export const seedBoardWithSampleData = () => {
 
   // Create some tags
   const featureTag = createTag({
-    name: '✨ Feature',
+    name: 'Feature',
     category: 'custom',
     color: '#C084FC',
   });
 
   const bugTag = createTag({
-    name: '🐛 Bug',
+    name: 'Bug',
     category: 'custom',
     color: '#FF5370',
   });
 
   const docTag = createTag({
-    name: '📚 Docs',
+    name: 'Docs',
     category: 'custom',
     color: '#4FD1FF',
   });
 
   const refactorTag = createTag({
-    name: '🔧 Refactor',
+    name: 'Refactor',
     category: 'custom',
     color: '#FFCB6B',
   });
