@@ -1,0 +1,298 @@
+/* Responsive Design for Kandoo VibeFlow */
+
+/* ========================================
+   Breakpoints
+   ======================================== */
+/* Mobile: < 768px */
+/* Tablet: 768px - 1024px */
+/* Desktop: 1024px - 1920px */
+/* Ultra-wide: > 1920px */
+
+/* ========================================
+   Mobile (< 768px)
+   ======================================== */
+@media (max-width: 767px) {
+  /* Stack columns vertically on mobile */
+  .kanban-board {
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 16px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .kanban-column {
+    min-width: 100% !important;
+    width: 100% !important;
+    max-height: none !important;
+  }
+
+  .column-header {
+    padding: 12px !important;
+    font-size: 16px !important;
+  }
+
+  .column-cards {
+    max-height: 400px !important;
+    overflow-y: auto !important;
+  }
+
+  /* Card adjustments for mobile */
+  .glass-card {
+    margin-bottom: 8px !important;
+  }
+
+  /* Command palette mobile adjustments */
+  .command-palette-container {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 0 auto !important;
+  }
+
+  .command-input {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+
+  /* Modal adjustments */
+  .modal-backdrop {
+    padding: 16px !important;
+  }
+
+  .card-composer-modal,
+  .card-detail-modal,
+  .shortcuts-modal {
+    width: 95% !important;
+    max-width: 95% !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Hide code rain on mobile for performance */
+  .app-background {
+    display: none !important;
+  }
+
+  /* Touch-friendly button sizes */
+  button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 14px !important;
+  }
+
+  /* Card composer mobile */
+  .composer-field {
+    font-size: 16px !important; /* Prevent zoom */
+  }
+
+  .composer-textarea {
+    min-height: 200px !important;
+    font-size: 16px !important; /* Prevent zoom */
+  }
+}
+
+/* ========================================
+   Tablet (768px - 1024px)
+   ======================================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Horizontal scroll on tablet */
+  .kanban-board {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 20px !important;
+    gap: 20px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .kanban-column {
+    min-width: 280px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Adjust card sizes */
+  .glass-card {
+    font-size: 14px !important;
+  }
+
+  /* Command palette tablet adjustments */
+  .command-palette-container {
+    width: 90% !important;
+    max-width: 600px !important;
+  }
+
+  /* Modal adjustments */
+  .card-composer-modal,
+  .card-detail-modal {
+    width: 80% !important;
+    max-width: 700px !important;
+  }
+
+  /* Touch-friendly interactions */
+  .kanban-column {
+    touch-action: pan-y !important;
+  }
+
+  .glass-card {
+    touch-action: manipulation !important;
+  }
+}
+
+/* ========================================
+   Desktop (1024px - 1920px)
+   ======================================== */
+@media (min-width: 1024px) and (max-width: 1920px) {
+  .kanban-board {
+    padding: 24px !important;
+    gap: 24px !important;
+  }
+
+  .kanban-column {
+    min-width: 320px !important;
+  }
+
+  .command-palette-container {
+    width: 640px !important;
+    max-width: 640px !important;
+  }
+
+  .card-composer-modal,
+  .card-detail-modal {
+    width: 600px !important;
+    max-width: 800px !important;
+  }
+}
+
+/* ========================================
+   Ultra-wide (> 1920px)
+   ======================================== */
+@media (min-width: 1921px) {
+  .app {
+    max-width: 2400px !important;
+    margin: 0 auto !important;
+  }
+
+  .kanban-board {
+    padding: 32px !important;
+    gap: 32px !important;
+  }
+
+  .kanban-column {
+    min-width: 380px !important;
+  }
+
+  /* Larger modals for ultra-wide */
+  .command-palette-container {
+    width: 800px !important;
+  }
+
+  .card-composer-modal,
+  .card-detail-modal {
+    width: 900px !important;
+    max-width: 1000px !important;
+  }
+
+  /* Split screen support */
+  .app-content {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ========================================
+   Touch Device Optimizations
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects on touch devices */
+  .glass-card:hover {
+    transform: none !important;
+  }
+
+  /* Larger touch targets */
+  button,
+  .command-item,
+  .glass-card {
+    min-height: 44px !important;
+  }
+
+  /* Better tap highlighting */
+  * {
+    -webkit-tap-highlight-color: rgba(79, 209, 255, 0.2) !important;
+  }
+
+  /* Prevent text selection during drag */
+  .glass-card,
+  .kanban-column {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+  }
+
+  /* Smooth scrolling on touch devices */
+  .kanban-board,
+  .column-cards,
+  .command-list {
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ========================================
+   Landscape Mobile
+   ======================================== */
+@media (max-width: 767px) and (orientation: landscape) {
+  .kanban-board {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+  }
+
+  .kanban-column {
+    min-width: 280px !important;
+    width: 280px !important;
+  }
+
+  .column-cards {
+    max-height: calc(100vh - 180px) !important;
+  }
+}
+
+/* ========================================
+   Reduced Motion
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Disable code rain for reduced motion */
+  .app-background {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+  .app-background,
+  .command-palette,
+  .shortcuts-modal,
+  button {
+    display: none !important;
+  }
+
+  .kanban-board {
+    display: block !important;
+  }
+
+  .kanban-column {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .glass-card {
+    border: 1px solid #333 !important;
+    background: white !important;
+    color: black !important;
+  }
+}

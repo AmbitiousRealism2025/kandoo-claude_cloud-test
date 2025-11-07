@@ -69,7 +69,7 @@ interface CodeSnippetType {
 }
 
 // Simple tokenizer for syntax highlighting
-const tokenizeCode = (code: string): JSX.Element => {
+const tokenizeCode = (code: string): React.ReactElement => {
   const tokens = code.split(/(\s+|[{}()\[\]<>,;.])/g);
   
   return (
@@ -106,14 +106,28 @@ const tokenizeCode = (code: string): JSX.Element => {
   );
 };
 
-const CodeRain: React.FC = () => {
+interface CodeRainProps {
+  intensity?: 'off' | 'low' | 'medium' | 'high';
+}
+
+const CodeRain: React.FC<CodeRainProps> = ({ intensity = 'medium' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [snippets, setSnippets] = useState<CodeSnippetType[]>([]);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
   const lastAddTimeRef = useRef<number>(0);
-  
+
   // Check for reduced motion preference
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Intensity settings
+  const intensityConfig = {
+    off: { count: 0, interval: 0 },
+    low: { count: 8, interval: 3000 },
+    medium: { count: 15, interval: 2000 },
+    high: { count: 25, interval: 1000 },
+  };
+
+  const config = intensityConfig[intensity];
   
   // Generate random snippet
   const generateSnippet = (): CodeSnippetType => {
@@ -144,11 +158,11 @@ const CodeRain: React.FC = () => {
   
   // Animation loop
   useEffect(() => {
-    if (prefersReducedMotion) return;
-    
+    if (prefersReducedMotion || intensity === 'off') return;
+
     let lastTime = performance.now();
-    const targetSnippetCount = 15; // Target number of snippets on screen
-    const addInterval = 2000; // Add new snippet every 2 seconds
+    const targetSnippetCount = config.count;
+    const addInterval = config.interval;
     
     const animate = (currentTime: number) => {
       const deltaTime = currentTime - lastTime;
@@ -180,7 +194,7 @@ const CodeRain: React.FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [prefersReducedMotion, snippets.length]);
+  }, [prefersReducedMotion, intensity, config, snippets.length]);
   
   if (prefersReducedMotion) {
     // Fallback for reduced motion

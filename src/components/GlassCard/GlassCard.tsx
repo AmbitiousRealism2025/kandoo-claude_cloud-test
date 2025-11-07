@@ -21,7 +21,6 @@ const GlassCard: React.FC<GlassCardProps> = ({
   isDragging = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [showActions, setShowActions] = useState(false);
   
   // Energy tag colors
   const getEnergyTagColor = (tag: string): string => {
@@ -135,14 +134,14 @@ const GlassCard: React.FC<GlassCardProps> = ({
         }}>
           <ReactMarkdown
             components={{
-              code({ inline, className, children, ...props }) {
+              code({ className, children }) {
                 const match = /language-(\w+)/.exec(className || '');
-                return !inline && match ? (
+                const isInline = !match;
+                return !isInline && match ? (
                   <SyntaxHighlighter
-                    style={oneDark}
+                    style={oneDark as any}
                     language={match[1]}
                     PreTag="div"
-                    {...props}
                   >
                     {String(children).replace(/\n$/, '')}
                   </SyntaxHighlighter>
@@ -156,7 +155,6 @@ const GlassCard: React.FC<GlassCardProps> = ({
                       fontSize: '12px',
                       fontFamily: 'var(--font-code)',
                     }}
-                    {...props}
                   >
                     {children}
                   </code>
@@ -179,25 +177,25 @@ const GlassCard: React.FC<GlassCardProps> = ({
         }}>
           {card.tags.map(tag => (
             <motion.span
-              key={tag}
+              key={tag.id}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onTagClick?.(tag)}
+              onClick={() => onTagClick?.(tag.name)}
               style={{
                 fontSize: '12px',
                 padding: '4px 8px',
                 borderRadius: '6px',
                 background: 'rgba(79, 209, 255, 0.1)',
                 border: '1px solid rgba(79, 209, 255, 0.3)',
-                color: getEnergyTagColor(tag),
+                color: getEnergyTagColor(tag.name),
                 cursor: 'pointer',
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 500,
                 transition: 'all 0.2s ease',
-                boxShadow: isHovered ? `0 0 10px ${getEnergyTagColor(tag)}40` : 'none',
+                boxShadow: isHovered ? `0 0 10px ${getEnergyTagColor(tag.name)}40` : 'none',
               }}
             >
-              {tag}
+              {tag.name}
             </motion.span>
           ))}
         </div>
@@ -288,4 +286,5 @@ const GlassCard: React.FC<GlassCardProps> = ({
   );
 };
 
-export default GlassCard;
+// Memoize to prevent unnecessary re-renders
+export default React.memo(GlassCard);
