@@ -5,6 +5,31 @@ import { useUIStore } from '@stores/uiStore';
 import type { Card, Tag, TagId } from '../../types/index';
 import './CardComposer.css';
 
+// Pre-made tags for vibe coders
+const PRESET_TAGS = [
+  { name: 'bug', color: '#FF6B6B', category: 'type' },
+  { name: 'feature', color: '#51CF66', category: 'type' },
+  { name: 'refactor', color: '#4FD1FF', category: 'type' },
+  { name: 'docs', color: '#FFD93D', category: 'type' },
+  { name: 'test', color: '#A78BFA', category: 'type' },
+  { name: 'performance', color: '#FFA94D', category: 'type' },
+  { name: 'security', color: '#F472B6', category: 'type' },
+  { name: 'frontend', color: '#22D3EE', category: 'scope' },
+  { name: 'backend', color: '#2DD4BF', category: 'scope' },
+  { name: 'api', color: '#06B6D4', category: 'scope' },
+  { name: 'database', color: '#0891B2', category: 'scope' },
+  { name: 'urgent', color: '#EF4444', category: 'priority' },
+  { name: 'blocked', color: '#6B7280', category: 'priority' },
+  { name: 'ready', color: '#10B981', category: 'priority' },
+  { name: 'review', color: '#8B5CF6', category: 'priority' },
+] as const;
+
+const COLOR_OPTIONS = [
+  '#FF6B6B', '#51CF66', '#4FD1FF', '#FFD93D', '#A78BFA',
+  '#FFA94D', '#F472B6', '#22D3EE', '#2DD4BF', '#06B6D4',
+  '#EF4444', '#10B981', '#8B5CF6', '#EC4899', '#F59E0B',
+];
+
 const CardComposer = () => {
   const { cardComposerOpen, cardComposerStage, closeCardComposer } = useUIStore();
   const { createCard, tags, createTag } = useBoardStore();
@@ -15,6 +40,8 @@ const CardComposer = () => {
   const [effortPoints, setEffortPoints] = useState<number | undefined>(undefined);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [newTagName, setNewTagName] = useState('');
+  const [newTagColor, setNewTagColor] = useState('#4FD1FF');
+  const [showCustomTagInput, setShowCustomTagInput] = useState(false);
 
   useEffect(() => {
     if (!cardComposerOpen) {
@@ -25,6 +52,8 @@ const CardComposer = () => {
       setEffortPoints(undefined);
       setSelectedTags([]);
       setNewTagName('');
+      setNewTagColor('#4FD1FF');
+      setShowCustomTagInput(false);
     }
   }, [cardComposerOpen]);
 
@@ -44,7 +73,36 @@ const CardComposer = () => {
     closeCardComposer();
   };
 
-  const handleAddTag = () => {
+  const handleSelectPresetTag = (presetTag: typeof PRESET_TAGS[number]) => {
+    // Check if tag already exists in store
+    const existingTag = tags.find(t => t.name.toLowerCase() === presetTag.name.toLowerCase());
+
+    if (existingTag) {
+      if (!selectedTags.find(t => t.id === existingTag.id)) {
+        setSelectedTags([...selectedTags, existingTag]);
+      }
+    } else {
+      // Create new tag in store
+      const tagId = createTag({
+        name: presetTag.name,
+        category: presetTag.category,
+        color: presetTag.color,
+      });
+
+      const newTag: Tag = {
+        id: tagId,
+        name: presetTag.name,
+        category: presetTag.category,
+        color: presetTag.color,
+        count: 0,
+        lastUsed: new Date(),
+      };
+
+      setSelectedTags([...selectedTags, newTag]);
+    }
+  };
+
+  const handleAddCustomTag = () => {
     if (!newTagName.trim()) return;
 
     const existingTag = tags.find(t => t.name.toLowerCase() === newTagName.toLowerCase());
@@ -57,14 +115,14 @@ const CardComposer = () => {
       const tagId = createTag({
         name: newTagName.trim(),
         category: 'custom',
-        color: '#4FD1FF',
+        color: newTagColor,
       });
 
       const newTag: Tag = {
         id: tagId,
         name: newTagName.trim(),
         category: 'custom',
-        color: '#4FD1FF',
+        color: newTagColor,
         count: 0,
         lastUsed: new Date(),
       };
@@ -73,6 +131,8 @@ const CardComposer = () => {
     }
 
     setNewTagName('');
+    setNewTagColor('#4FD1FF');
+    setShowCustomTagInput(false);
   };
 
   const handleRemoveTag = (tagId: TagId) => {
@@ -164,44 +224,121 @@ const CardComposer = () => {
 
             <div className="form-group">
               <label>Tags</label>
-              <div className="tags-input-container">
-                <input
-                  type="text"
-                  className="input-glass"
-                  value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddTag();
-                    }
-                  }}
-                  placeholder="Add a tag..."
-                />
-                <button
-                  type="button"
-                  className="btn-glass"
-                  onClick={handleAddTag}
-                  disabled={!newTagName.trim()}
-                >
-                  Add
-                </button>
+
+              {/* Preset Tags */}
+              <div className="preset-tags-section">
+                <p className="preset-tags-label">Quick Select:</p>
+                <div className="preset-tags-grid">
+                  {PRESET_TAGS.map((presetTag) => {
+                    const isSelected = selectedTags.some(t => t.name.toLowerCase() === presetTag.name.toLowerCase());
+                    return (
+                      <button
+                        key={presetTag.name}
+                        type="button"
+                        className={`preset-tag-btn ${isSelected ? 'selected' : ''}`}
+                        style={{
+                          '--tag-color': presetTag.color,
+                        } as React.CSSProperties}
+                        onClick={() => handleSelectPresetTag(presetTag)}
+                        disabled={isSelected}
+                      >
+                        {presetTag.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
+              {/* Custom Tag Input */}
+              {!showCustomTagInput ? (
+                <button
+                  type="button"
+                  className="btn-glass btn-add-custom-tag"
+                  onClick={() => setShowCustomTagInput(true)}
+                >
+                  + Add a Custom Tag
+                </button>
+              ) : (
+                <div className="custom-tag-section">
+                  <div className="custom-tag-input-row">
+                    <input
+                      type="text"
+                      className="input-glass"
+                      value={newTagName}
+                      onChange={(e) => setNewTagName(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddCustomTag();
+                        }
+                      }}
+                      placeholder="Custom tag name..."
+                      autoFocus
+                    />
+                    <div className="color-picker-wrapper">
+                      <label className="color-picker-label">Color:</label>
+                      <div className="color-options">
+                        {COLOR_OPTIONS.map((color) => (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`color-option ${newTagColor === color ? 'selected' : ''}`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => setNewTagColor(color)}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="custom-tag-actions">
+                    <button
+                      type="button"
+                      className="btn-glass btn-sm"
+                      onClick={() => {
+                        setShowCustomTagInput(false);
+                        setNewTagName('');
+                        setNewTagColor('#4FD1FF');
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-glass btn-glass-emerald btn-sm"
+                      onClick={handleAddCustomTag}
+                      disabled={!newTagName.trim()}
+                    >
+                      Add Tag
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Selected Tags Display */}
               {selectedTags.length > 0 && (
                 <div className="selected-tags">
-                  {selectedTags.map(tag => (
-                    <span key={tag.id} className="tag-pill">
-                      {tag.name}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag.id)}
-                        className="tag-remove"
+                  <p className="selected-tags-label">Selected Tags:</p>
+                  <div className="selected-tags-list">
+                    {selectedTags.map(tag => (
+                      <span
+                        key={tag.id}
+                        className="tag-pill"
+                        style={{
+                          '--tag-color': tag.color,
+                        } as React.CSSProperties}
                       >
-                        ✕
-                      </button>
-                    </span>
-                  ))}
+                        {tag.name}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag.id)}
+                          className="tag-remove"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

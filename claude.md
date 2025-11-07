@@ -133,6 +133,106 @@ kandoo-vibeflow/
    - [ ] Background sync (future)
    - [ ] Push notifications (future)
 
+## Bug Fixes & Improvements
+
+### Drag-and-Drop Fix (2025-11-07)
+**Branch:** `claude/fix-drag-and-drop-011CUu6dwG2kVMft2S1smZvv`
+**Commit:** `e6ae7b9`
+
+Fixed critical drag-and-drop issues that prevented proper card movement and reordering:
+
+**Issues Fixed:**
+1. ❌ Missing `onDragOver` handler - Prevented real-time position tracking during drag
+2. ❌ Incorrect `handleDragEnd` logic - Couldn't distinguish between dropping on cards vs columns
+3. ❌ State mutation bug - Reordering bypassed Zustand state management
+4. ❌ No insertion position calculation - Couldn't insert cards between existing cards
+
+**Changes in `src/features/board/Board.tsx`:**
+- Added `DragOverEvent` import from `@dnd-kit/core`
+- Added `overId` state variable to track current drag-over target
+- Implemented `handleDragOver` handler for real-time tracking
+- Completely rewrote `handleDragEnd` with proper card/column detection:
+  - Distinguishes between dropping on cards vs columns
+  - Calculates correct insertion position
+  - Handles same-column reordering
+  - Handles cross-column moves
+- Updated `handleDragCancel` to reset `overId` state
+- Wired up `onDragOver` handler in `DndContext`
+- Removed unused `arrayMove` import
+
+**Changes in `src/stores/boardStore.ts`:**
+- Fixed `moveCard` function to properly handle both scenarios:
+  - Same-column reordering: Uses splice to remove and re-insert at correct position
+  - Cross-column moves: Removes from old stage, inserts at specified position in new stage
+- Separated logic paths for clarity and correctness
+- Fixed off-by-one errors in position calculations
+- Maintained Zustand immutability patterns throughout
+
+**Result:**
+✅ Cards can be dragged between columns
+✅ Cards can be inserted between existing cards
+✅ Cards can be reordered within the same column
+✅ State properly persists to localStorage
+
+---
+
+### Enhanced Tag System (2025-11-07)
+**Branch:** `claude/fix-drag-and-drop-011CUu6dwG2kVMft2S1smZvv`
+**Commit:** `44071ff`
+
+Completely revamped the tag creation experience with preset tags and custom color picker for better vibe coder workflow:
+
+**New Features:**
+
+1. **Preset Tags with Colors** - Added 15 pre-made tags organized by category:
+   - **Type tags:** bug (#FF6B6B), feature (#51CF66), refactor (#4FD1FF), docs (#FFD93D), test (#A78BFA), performance (#FFA94D), security (#F472B6)
+   - **Scope tags:** frontend (#22D3EE), backend (#2DD4BF), api (#06B6D4), database (#0891B2)
+   - **Priority tags:** urgent (#EF4444), blocked (#6B7280), ready (#10B981), review (#8B5CF6)
+
+2. **Custom Tag Creation** - Improved custom tag workflow:
+   - Changed "Add a tag" to "+ Add a Custom Tag" button
+   - Added color picker with 15 vibrant color options
+   - Expandable section with Cancel/Add actions
+   - Auto-focus on tag name input when opened
+
+3. **Dynamic Tag Colors** - Tags now display with their assigned colors:
+   - CSS uses custom properties (`--tag-color`) for dynamic rendering
+   - `color-mix()` for semi-transparent backgrounds and borders
+   - Consistent colors across GlassCard, CardDetail, and CardComposer views
+
+**Changes by File:**
+
+`src/components/CardComposer/CardComposer.tsx`:
+- Added `PRESET_TAGS` constant with 15 vibe coder tags
+- Added `COLOR_OPTIONS` constant with 15 color choices
+- Added state: `newTagColor`, `showCustomTagInput`
+- Created `handleSelectPresetTag()` for preset tag selection
+- Renamed `handleAddTag()` to `handleAddCustomTag()` with color support
+- New UI sections: preset tags grid, custom tag input with color picker
+
+`src/components/CardComposer/CardComposer.css`:
+- Added `.preset-tags-section` with responsive grid layout
+- Added `.preset-tag-btn` with hover effects and color theming
+- Added `.custom-tag-section` with expandable form
+- Added `.color-picker-wrapper` with `.color-options`
+- Added `.color-option` buttons with hover and selected states
+- Updated `.tag-pill` to use `--tag-color` CSS custom property
+
+`src/components/GlassCard/GlassCard.tsx`:
+- Updated tag rendering to use `tag.color` property
+- Dynamic background/border colors using hex + alpha notation
+
+`src/components/CardDetail/CardDetail.tsx`:
+- Added inline style with `--tag-color` custom property
+- Tags respect their assigned colors in detail view
+
+**Result:**
+✅ Quick tag selection with colorful presets
+✅ Custom tags with color personalization
+✅ Consistent tag colors across all views
+✅ Improved visual hierarchy and UX
+✅ Better organization for vibe coders
+
 ## Key Design Principles
 
 ### Glassmorphism Formula

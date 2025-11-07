@@ -175,29 +175,32 @@ const GlassCard: React.FC<GlassCardProps> = ({
           gap: '6px',
           marginBottom: '12px',
         }}>
-          {card.tags.map(tag => (
-            <motion.span
-              key={tag.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onTagClick?.(tag.name)}
-              style={{
-                fontSize: '12px',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                background: 'rgba(79, 209, 255, 0.1)',
-                border: '1px solid rgba(79, 209, 255, 0.3)',
-                color: getEnergyTagColor(tag.name),
-                cursor: 'pointer',
-                fontFamily: 'var(--font-ui)',
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                boxShadow: isHovered ? `0 0 10px ${getEnergyTagColor(tag.name)}40` : 'none',
-              }}
-            >
-              {tag.name}
-            </motion.span>
-          ))}
+          {card.tags.map(tag => {
+            const tagColor = tag.color || '#4FD1FF';
+            return (
+              <motion.span
+                key={tag.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onTagClick?.(tag.name)}
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  background: `${tagColor}15`,
+                  border: `1px solid ${tagColor}40`,
+                  color: tagColor,
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease',
+                  boxShadow: isHovered ? `0 0 10px ${tagColor}40` : 'none',
+                }}
+              >
+                {tag.name}
+              </motion.span>
+            );
+          })}
         </div>
       )}
       
